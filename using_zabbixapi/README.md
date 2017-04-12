@@ -1,0 +1,2 @@
+# Installation
+` gem install zabbixapi `
