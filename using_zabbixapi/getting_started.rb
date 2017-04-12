@@ -13,5 +13,26 @@ zbx = ZabbixApi.connect(
   http_user:     BASIC_USER,
   http_password: BASIC_PASS
 )
+puts zbx
+auth_token = zbx.client.instance_variable_get(:@auth_hash)
+puts auth_token
 
-puts zbx.query(method: 'apiinfo.version', params: [])
+# puts zbx.query(method: 'apiinfo.version', params: [])
+# zbx.query(method: 'graph.get', params: []).each do |record|
+#   puts record['graphid'] if record["name"].match("全体的なプロセス数")
+# end
+
+graphid = zbx.query(method: 'graph.get', params: []).first['graphid']
+GRAPH_URL_TEMPLATE = "#{PROTOCOL}://#{DOMAIN}/chart2.php?graphid=#{graphid}&period=3600&width=800".freeze
+cookie = 'zbx_sessionid=' + auth_token
+headers = { 'Cookie' => cookie }
+puts headers
+open(GRAPH_URL_TEMPLATE, headers) do |file|
+  puts file
+end
+
+# period  グラフ画像の期間(秒)
+# stime グラフの開始時間(YYYYMMDDhhmmss)
+
+# puts zbx.query(method: 'graphitem.get', params: []).first
+# puts zbx.query(method: 'image.get', params: []).first
